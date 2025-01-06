@@ -1,4 +1,4 @@
-import React from 'react';
+//import React from 'react';
 
 const HeroSection = () => {
   return (
@@ -7,7 +7,7 @@ const HeroSection = () => {
         <div className="md:w-1/2">
           <h1 className="text-4xl font-bold mb-4">Discover the Latest Fashion Trends</h1>
           <p className="text-lg mb-4">Shop the best deals on our new collection.</p>
-          <button className="bg-blue-500 text-white py-2 px-4 rounded">Shop Now</button>
+          <button className="bg-rose-400 hover:bg-rose-300 text-white py-2 px-4 rounded">Shop Now</button>
         </div>
         <div className="md:w-1/2">
           <img src="https://www.pixelstalk.net/wp-content/uploads/2016/06/Photos-Download-Fashion-Wallpaper-High-Resolution.jpg" alt="Fashion" />
