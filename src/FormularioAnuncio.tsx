@@ -4,10 +4,11 @@ import { Label, TextInput, Textarea, Button, Select, Checkbox, Alert } from 'flo
 import axios from 'axios';
 import Tesseract from 'tesseract.js';
 import Navbar from './Navbar';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 
 export default function CrearAnuncio() {
+  const navigate = useNavigate();
+
   const [plan, setPlan] = useState<'basico' | 'premium'>('basico');
   const [aceptaPoliticas, setAceptaPoliticas] = useState(false);
   const [mostrarPoliticas, setMostrarPoliticas] = useState(false);
@@ -103,9 +104,8 @@ export default function CrearAnuncio() {
   };
 
   return (
-
     <>
-      <Navbar onPublicarClick={() => navigate('/crear-anuncio')} />
+      <Navbar />
       <div className="max-w-2xl mx-auto mt-8 p-4">
         <h1 className="text-2xl font-semibold mb-4">Publicar Anuncio</h1>
         <div className="grid grid-cols-1 gap-4">
