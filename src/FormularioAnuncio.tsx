@@ -22,6 +22,11 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
   const [mensaje, setMensaje] = useState('');
   const [advertenciaTexto, setAdvertenciaTexto] = useState('');
 
+  const handleChange = (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      setter(e.target.value);
+    };
+
   const analizarTextoImagen = async (file: File) => {
     const { data } = await Tesseract.recognize(file, 'eng');
     const textoDetectado = data.text.trim();
@@ -105,12 +110,12 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
             <option value="premium">Plan Premium ($5)</option>
           </Select>
 
-          <TextInput name="titulo" placeholder="Título" onChange={e => setTitulo('')} required autoComplete="off" />
-          <Textarea name="descripcion" placeholder="Descripción" rows={3} onChange={e => setDescripcion(e.target.value || '')} required />
-          <TextInput name="localidad" placeholder="Localidad" onChange={e => setLocalidad(e.target.value || '')} required />
-          <TextInput name="precio" placeholder="Precio" onChange={e => setPrecio(e.target.value || '')} required />
+          <TextInput name="titulo" placeholder="Título" value={titulo} onChange={handleChange(setTitulo)} required autoComplete="off" />
+          <Textarea name="descripcion" placeholder="Descripción" rows={3} value={descripcion} onChange={handleChange(setDescripcion)} required />
+          <TextInput name="localidad" placeholder="Localidad" value={localidad} onChange={handleChange(setLocalidad)} required />
+          <TextInput name="precio" placeholder="Precio" value={precio} onChange={handleChange(setPrecio)} required />
 
-          <Select name="categoria" value={categoria} onChange={e => setCategoria(e.target.value || '')} required>
+          <Select name="categoria" value={categoria} onChange={handleChange(setCategoria)} required>
             <option value="">Seleccioná una categoría</option>
             <option value="Comida">Comida</option>
             <option value="Ropa">Ropa</option>
@@ -121,9 +126,9 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
 
           {plan === 'premium' && (
             <>
-              <TextInput name="whatsapp" placeholder="Número de WhatsApp" onChange={e => setWhatsapp(e.target.value || '')} />
-              <TextInput name="telefono" placeholder="Teléfono para llamadas" onChange={e => setTelefono(e.target.value || '')} />
-              <TextInput name="url" placeholder="URL de tu página web" onChange={e => setUrl(e.target.value || '')} />
+              <TextInput name="whatsapp" placeholder="Número de WhatsApp" value={whatsapp} onChange={handleChange(setWhatsapp)} />
+              <TextInput name="telefono" placeholder="Teléfono para llamadas" value={telefono} onChange={handleChange(setTelefono)} />
+              <TextInput name="url" placeholder="URL de tu página web" value={url} onChange={handleChange(setUrl)} />
             </>
           )}
 
