@@ -1,10 +1,13 @@
-// src/components/FormularioAnuncio.tsx
+// src/pages/CrearAnuncio.tsx
 import React, { useState } from 'react';
-import { Label, TextInput, Textarea, Button, Select, Checkbox, Alert, Modal } from 'flowbite-react';
+import { Label, TextInput, Textarea, Button, Select, Checkbox, Alert } from 'flowbite-react';
 import axios from 'axios';
 import Tesseract from 'tesseract.js';
+import Navbar from './Navbar';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
-export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boolean; onClose: () => void }) {
+
+export default function CrearAnuncio() {
   const [plan, setPlan] = useState<'basico' | 'premium'>('basico');
   const [aceptaPoliticas, setAceptaPoliticas] = useState(false);
   const [mostrarPoliticas, setMostrarPoliticas] = useState(false);
@@ -31,7 +34,6 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
     const { data } = await Tesseract.recognize(file, 'eng');
     const textoDetectado = data.text.trim();
     const cantidadTexto = textoDetectado.length;
-    console.log("Texto detectado en imagen:", textoDetectado);
 
     if (/arma|pistola|desnudo|sexo|violencia/i.test(textoDetectado)) {
       alert('🚫 Imagen con contenido inapropiado. Por favor, subí otra.');
@@ -101,21 +103,23 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
   };
 
   return (
-    <Modal show={mostrar} onClose={onClose} size="lg" dismissible>
-      <Modal.Header>Publicar Anuncio</Modal.Header>
-      <Modal.Body>
+
+    <>
+      <Navbar onPublicarClick={() => navigate('/crear-anuncio')} />
+      <div className="max-w-2xl mx-auto mt-8 p-4">
+        <h1 className="text-2xl font-semibold mb-4">Publicar Anuncio</h1>
         <div className="grid grid-cols-1 gap-4">
           <Select name="plan" value={plan} onChange={(e) => setPlan(e.target.value as 'basico' | 'premium')}>
             <option value="basico">Plan Básico ($1)</option>
             <option value="premium">Plan Premium ($5)</option>
           </Select>
 
-          <TextInput name="titulo" placeholder="Título" value={titulo} onChange={handleChange(setTitulo)} required autoComplete="off" />
-          <Textarea name="descripcion" placeholder="Descripción" rows={3} value={descripcion} onChange={handleChange(setDescripcion)} required />
-          <TextInput name="localidad" placeholder="Localidad" value={localidad} onChange={handleChange(setLocalidad)} required />
-          <TextInput name="precio" placeholder="Precio" value={precio} onChange={handleChange(setPrecio)} required />
+          <TextInput name="titulo" placeholder="Título" value={titulo} onChange={handleChange(setTitulo)} />
+          <Textarea name="descripcion" placeholder="Descripción" rows={3} value={descripcion} onChange={handleChange(setDescripcion)} />
+          <TextInput name="localidad" placeholder="Localidad" value={localidad} onChange={handleChange(setLocalidad)} />
+          <TextInput name="precio" placeholder="Precio" value={precio} onChange={handleChange(setPrecio)} />
 
-          <Select name="categoria" value={categoria} onChange={handleChange(setCategoria)} required>
+          <Select name="categoria" value={categoria} onChange={handleChange(setCategoria)}>
             <option value="">Seleccioná una categoría</option>
             <option value="Comida">Comida</option>
             <option value="Ropa">Ropa</option>
@@ -143,7 +147,6 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
                 Ver más políticas
               </button>
             </span>
-
             {mostrarPoliticas && (
               <div className="mt-2 text-xs text-gray-600">
                 Pexels.cloud no se hace responsable por el contenido de los anuncios. No promovemos negocios ilegales, armas,
@@ -160,7 +163,7 @@ export default function FormularioAnuncio({ mostrar, onClose }: { mostrar: boole
 
           {mensaje && <Alert color="info">{mensaje}</Alert>}
         </div>
-      </Modal.Body>
-    </Modal>
+      </div>
+    </>
   );
 }

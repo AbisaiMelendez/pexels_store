@@ -5,8 +5,9 @@ import ProductCard from './ProductCard';
 import Footer from './assets/Footer';
 import FiltroBar from './FiltroVar';
 import axios from 'axios';
-import { useEffect, useState, ChangeEvent } from 'react';
-import FormularioAnuncio from './FormularioAnuncio';
+import { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import CrearAnuncio from './FormularioAnuncio';
 
 interface Anuncio {
   id: number;
@@ -26,10 +27,8 @@ interface Filtro {
   busqueda: string;
 }
 
-function App() {
+function Home() {
   const [anuncios, setAnuncios] = useState<Anuncio[]>([]);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
   const [filtro, setFiltro] = useState<Filtro>({
     categoria: '',
     localidad: '',
@@ -37,36 +36,19 @@ function App() {
     busqueda: ''
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     axios
-      .get('http://157.230.188.1:5000/api/anuncios') // Reemplazá con tu IP o dominio
+      .get('http://157.230.188.1:5000/api/anuncios')
       .then((res) => setAnuncios(res.data))
       .catch((err) => console.error('Error al obtener anuncios:', err));
   }, []);
-
-  const handleBusquedaChange = (valor: string) => {
-    setFiltro({ ...filtro, busqueda: valor });
-  };
-
-  const handleBuscar = () => {
-    console.log('Buscando con:', filtro);
-    // Podés agregar scroll, analytics, etc.
-  };
-
-
-
-  // const handleClic = (id: number) => {
-  //   axios
-  //     .post(`http://157.230.188.1:5000/api/anuncios/${id}/clic`)
-  //     .then(() => console.log(`Clic registrado para ID: ${id}`))
-  //     .catch(err => console.error('Error al contar clic:', err));
-  // };
 
   const handleClic = (id: number) => {
     axios
       .post(`http://157.230.188.1:5000/api/anuncios/${id}/clic`)
       .then(() => {
-        // Actualizar el contador local
         setAnuncios((prev) =>
           prev.map((a) =>
             a.id === id ? { ...a, clics: (a.clics || 0) + 1 } : a
@@ -76,28 +58,28 @@ function App() {
       .catch((err) => console.error('Error al contar clic:', err));
   };
 
+  const handleBusquedaChange = (valor: string) => {
+    setFiltro({ ...filtro, busqueda: valor });
+  };
 
+  const handleBuscar = () => {
+    console.log('Buscando con:', filtro);
+  };
 
   const anunciosFiltrados = anuncios
     .filter((a) => !filtro.categoria || a.categoria === filtro.categoria)
     .filter((a) => !filtro.localidad || a.localidad === filtro.localidad)
     .filter((a) =>
       !filtro.busqueda ||
-      a.titulo?.toLowerCase().includes(filtro.busqueda.toLowerCase()) ||
-      a.descripcion?.toLowerCase().includes(filtro.busqueda.toLowerCase())
+      a.titulo.toLowerCase().includes(filtro.busqueda.toLowerCase()) ||
+      a.descripcion.toLowerCase().includes(filtro.busqueda.toLowerCase())
     )
     .sort((a, b) => (filtro.destacados ? (b.clics || 0) - (a.clics || 0) : 0));
 
   return (
     <div>
-      <Navbar onPublicarClick={() => setMostrarFormulario(true)} />
-
-      <FormularioAnuncio
-        mostrar={mostrarFormulario}
-        onClose={() => setMostrarFormulario(false)}
-      />
+      <Navbar onPublicarClick={() => navigate('/crear-anuncio')} />
       <HeroSection />
-
 
       <FiltroBar
         {...filtro}
@@ -116,9 +98,8 @@ function App() {
               descripcion: item.descripcion,
               clics: item.clics || 0
             }}
-            onClick={() => handleClic(item.id)} // ✅ ahora sí funciona
+            onClick={() => handleClic(item.id)}
           />
-
         ))}
       </div>
 
@@ -127,4 +108,13 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/crear-anuncio" element={<CrearAnuncio />} />
+      </Routes>
+    </Router>
+  );
+}
